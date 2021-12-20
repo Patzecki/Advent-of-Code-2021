@@ -1,44 +1,41 @@
 fun main() {
 
-	data class Lanternfish(var timer: Int)
+	fun LongArray.rotateLeftInPlace() {
+		val leftMost = first()
+		this.copyInto(this, startIndex = 1)
+		this[this.lastIndex] = leftMost
+	}
 
-	fun parseInput(input: List<String>): List<Lanternfish> {
-		val lanternfishes = input.get(0).split(",").map { lanternfish ->
-				Lanternfish( lanternfish.toInt() )
+	fun simulateDays(fishiesPerDay: LongArray, days: Int): Long {
+		repeat(days) {
+			fishiesPerDay.rotateLeftInPlace()
+			fishiesPerDay[6] += fishiesPerDay[8]
 		}
-		return lanternfishes
+		return fishiesPerDay.sum()
 	}
 
-	fun age(list: List<Lanternfish>, age: Int): Int {
-		for (i in 1..age) {
-			list.forEach {
-				it.timer--
-				if (it.timer == 0) {
-					list.plus(Lanternfish(8))
-				}
-			}
-
+	fun parseInput(input: String): LongArray =
+		LongArray(9).apply {
+			input.split(",").map { it.toInt() }.forEach { this[it] += 1L }
 		}
-		return list.size
+
+	fun part1(input: List<String>): Long {
+		val parsedInput = parseInput(input[0])
+		return simulateDays(parsedInput, 80)
 	}
 
-	fun part1(input: List<String>): Int {
-		val parsedInput = parseInput(input)
-		return age(parsedInput, 80)
-	}
-
-	fun part2(input: List<String>): Int {
-		return input.size
+	fun part2(input: List<String>): Long {
+		val parsedInput = parseInput(input[0])
+		return simulateDays(parsedInput, 256)
 	}
 
 	// test if implementation meets criteria from the description, like:
 	val testInput = readInput("Day06_test")
 	val input = readInput("Day06")
 
-	//println(part1(testInput))
-	//check(part1(testInput) == 5934)
-	//println(part1(input))
+	check(part1(testInput) == 5934L)
+	println(part1(input))
 
-	//check(part2(testInput) == 12)
-	//println(part2(input))
+	check(part2(testInput) == 26984457539)
+	println(part2(input))
 }
